@@ -1,9 +1,43 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: egeaydin <egeaydin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/16 17:56:16 by egeaydin          #+#    #+#             */
+/*   Updated: 2025/08/17 17:07:03 by egeaydin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
+
+char	*ft_calloc(size_t nmemb, size_t size)
+{
+	char	*ptr;
+	size_t	bytes;
+	size_t	i;
+
+	bytes = nmemb * size;
+	ptr = malloc(bytes);
+	if (!ptr)
+		return (NULL);
+	i = 0;
+	while (bytes > 0)
+	{
+		ptr[i] = '\0';
+		i++;
+		bytes--;
+	}
+	return (ptr);
+}
 size_t	ft_strlen(const char *s)
 {
 	int	i;
 
 	i = 0;
+	if (!s)
+		return(0);
 	while (s[i])
 	{
 		i++;
@@ -18,7 +52,7 @@ char	*ft_strdup(const char *s)
 	i = 0;
 	if (!s)
 		return (NULL);
-	strptr = malloc(sizeof(char) * (ft_strlen(s) + 1));
+	strptr = ft_calloc(sizeof(char), (ft_strlen(s) + 1));
 	if (!strptr)
 		return (NULL);
 	while (s[i])
@@ -43,7 +77,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len + start > size)
 		len = size - start;
-	ptr = malloc(sizeof(char) * len + 1);
+	ptr = ft_calloc(sizeof(char) , len + 1);
 	if (!ptr)
 		return (NULL);
 	while (s[start] && i < len)

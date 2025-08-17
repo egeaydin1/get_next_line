@@ -1,12 +1,25 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: egeaydin <egeaydin@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/08/14 19:18:08 by egeaydin          #+#    #+#             */
+/*   Updated: 2025/08/17 20:52:59 by egeaydin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 static char *get_row(int fd,char *buffer)
 {
 	int redbyte = 0;
 	char *result;
 	char *temp;
-	result = ft_strdup("");
+	
+	result = ft_strdup(buffer);
 	if (ft_strchr(buffer,'\n'))
-		return(buffer);	
+		return(buffer);
 	redbyte = read(fd,buffer,BUFFER_SIZE);
 	while (redbyte > 0)
 	{
@@ -17,41 +30,54 @@ static char *get_row(int fd,char *buffer)
 			break;
 		redbyte = read(fd,buffer,BUFFER_SIZE);
 	}
-	return (result);
+    if (redbyte == -1)
+        return(NULL);
+    else
+        return(result);
 }
-char *reload_row(const char *previus_row)
-{
-	char	*temp;
-	char	*reload;
-	int		i;
+
+char *seperate_row(char*row)
+{	
+	int i;
 
 	i = 0;
-	temp = ft_strchr(previus_row,'\n') + 1;
-	if (!temp)
-		temp = (char *)previus_row;
-	reload = (char *)malloc(sizeof(char) * ft_strlen(temp));
-	if (!reload)
-		return(NULL);
-	while (temp[i])
-	{
-		reload[i] = temp[i];
+	while (row[i] && row[i] != '\n')
 		i++;
-	}
-	reload[i] = '\0';
-	return(reload);
+	//printf("count	%d\n",i);
+    return (ft_substr(row,0,i));
+}
+
+char *reload_row(char *previus_row)
+{
+	int		i;
+	char	*result;
+
+	i = 0;
+	while (previus_row[i] != '\n' && previus_row[i])
+		i++;	
+	if (!previus_row[i])
+		return (NULL);
+	i++;
+	result = ft_strdup(&previus_row[i]);
+	free(previus_row);
+	return(result);
 }
 char *get_next_line(int fd)
 {
     static char *buffer;
 	char *line;
 	char *temp;
-	printf("'%s'\n",buffer);
 	if (!buffer)
-		buffer = (char *)malloc(sizeof(char) * BUFFER_SIZE);
+		buffer = (char *)ft_calloc(sizeof(char), BUFFER_SIZE);
 	temp = get_row(fd,buffer);
-	line = ft_substr(temp,0,ft_strchr(temp,'\n')-temp);
+	printf("after get	:'%s'\n",temp);
+	if (!temp)
+		return(NULL);
+	line = seperate_row(temp);
+	printf("after sep	:'%s'\n",line);
 	buffer = reload_row(temp);
-	printf("'%s'\n",buffer);
+	if (!buffer && !line)
+		return(NULL);
 	return (line);
 }
 
