@@ -6,7 +6,7 @@
 /*   By: egeaydin <egeaydin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 19:18:08 by egeaydin          #+#    #+#             */
-/*   Updated: 2025/08/17 20:52:59 by egeaydin         ###   ########.fr       */
+/*   Updated: 2025/08/18 20:56:18 by egeaydin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ static char *get_row(int fd,char *buffer)
 	char *temp;
 	
 	result = ft_strdup(buffer);
-	if (ft_strchr(buffer,'\n'))
-		return(buffer);
+/* 	if (ft_strchr(buffer,'\n'))
+		return(result); */
 	redbyte = read(fd,buffer,BUFFER_SIZE);
 	while (redbyte > 0)
 	{
@@ -39,12 +39,15 @@ static char *get_row(int fd,char *buffer)
 char *seperate_row(char*row)
 {	
 	int i;
+	char *sep_row;
 
+	if (!row)
+		return(NULL);	
 	i = 0;
 	while (row[i] && row[i] != '\n')
 		i++;
-	//printf("count	%d\n",i);
-    return (ft_substr(row,0,i));
+	sep_row = ft_substr(row,0,i);
+    return (sep_row);
 }
 
 char *reload_row(char *previus_row)
@@ -52,6 +55,8 @@ char *reload_row(char *previus_row)
 	int		i;
 	char	*result;
 
+	if (!previus_row)
+		return(NULL);	
 	i = 0;
 	while (previus_row[i] != '\n' && previus_row[i])
 		i++;	
@@ -67,17 +72,17 @@ char *get_next_line(int fd)
     static char *buffer;
 	char *line;
 	char *temp;
+	
+	if (BUFFER_SIZE <= 0 || fd < 0)
+		return(NULL);
 	if (!buffer)
-		buffer = (char *)ft_calloc(sizeof(char), BUFFER_SIZE);
+		buffer = (char *)ft_calloc(sizeof(char), BUFFER_SIZE + 1);
 	temp = get_row(fd,buffer);
-	printf("after get	:'%s'\n",temp);
-	if (!temp)
-		return(NULL);
 	line = seperate_row(temp);
-	printf("after sep	:'%s'\n",line);
+	free(temp);
+	temp = NULL;
+	free(buffer);
 	buffer = reload_row(temp);
-	if (!buffer && !line)
-		return(NULL);
 	return (line);
 }
 
