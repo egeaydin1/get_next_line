@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: egeaydin <egeaydin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hientranpc <hientranpc@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/16 17:56:16 by egeaydin          #+#    #+#             */
-/*   Updated: 2025/08/18 20:54:57 by egeaydin         ###   ########.fr       */
+/*   Updated: 2025/08/18 23:10:29 by hientranpc       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	i = -1;
 	j = -1;
 	s1size = ft_strlen(s1);
-	ptr = malloc(sizeof(char) * (s1size + (ft_strlen(s2) + 1)));
+	ptr = ft_calloc(sizeof(char), (s1size + (ft_strlen(s2) + 1)));
 	if (!ptr)
 		return (NULL);
 	while (s1[++i])

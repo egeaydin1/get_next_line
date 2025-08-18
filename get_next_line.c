@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: egeaydin <egeaydin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hientranpc <hientranpc@student.42.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 19:18:08 by egeaydin          #+#    #+#             */
-/*   Updated: 2025/08/18 20:56:18 by egeaydin         ###   ########.fr       */
+/*   Updated: 2025/08/18 23:52:54 by hientranpc       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,11 @@ static char *get_row(int fd,char *buffer)
 	char *temp;
 	
 	result = ft_strdup(buffer);
-/* 	if (ft_strchr(buffer,'\n'))
-		return(result); */
 	redbyte = read(fd,buffer,BUFFER_SIZE);
 	while (redbyte > 0)
 	{
 		temp = result;
+		buffer[redbyte] = '\0';
 		result = ft_strjoin(result,buffer);
 		free(temp);
 		if (ft_strchr(buffer,'\n'))
@@ -41,12 +40,14 @@ char *seperate_row(char*row)
 	int i;
 	char *sep_row;
 
-	if (!row)
+	if (!*row || !row)
 		return(NULL);	
 	i = 0;
 	while (row[i] && row[i] != '\n')
 		i++;
-	sep_row = ft_substr(row,0,i);
+	if (i == 0)
+		return(ft_strdup("\n"));
+	sep_row = ft_substr(row,0,i + 1);
     return (sep_row);
 }
 
@@ -55,7 +56,7 @@ char *reload_row(char *previus_row)
 	int		i;
 	char	*result;
 
-	if (!previus_row)
+	if (!*previus_row || !previus_row)
 		return(NULL);	
 	i = 0;
 	while (previus_row[i] != '\n' && previus_row[i])
@@ -73,16 +74,28 @@ char *get_next_line(int fd)
 	char *line;
 	char *temp;
 	
-	if (BUFFER_SIZE <= 0 || fd < 0)
-		return(NULL);
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
 	if (!buffer)
+	{
 		buffer = (char *)ft_calloc(sizeof(char), BUFFER_SIZE + 1);
+		if (!buffer)
+			return(NULL);
+	}
 	temp = get_row(fd,buffer);
+	if (!temp)
+		return(NULL);
+	//printf("temp	:'%s'\n",temp);
 	line = seperate_row(temp);
-	free(temp);
-	temp = NULL;
+	//printf("line	:'%s'\n",line);
 	free(buffer);
 	buffer = reload_row(temp);
+	if (buffer == NULL)
+	{
+		free(temp);
+		temp = NULL;
+		temp = line;
+	}
 	return (line);
 }
 
