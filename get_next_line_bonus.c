@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: egeaydin <egeaydin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/14 19:18:08 by egeaydin          #+#    #+#             */
-/*   Updated: 2025/08/19 19:16:07 by egeaydin         ###   ########.fr       */
+/*   Updated: 2025/08/19 19:38:26 by egeaydin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*control(char *read_buffer, char *buffer)
 {
@@ -97,22 +97,22 @@ static char	*reload_row(char *previus_row)
 
 char	*get_next_line(int fd)
 {
-	static char	*buffer;
+	static char	*buffer[1024];
 	char		*line;
-	char		*temp;
+	char		*temp[1024];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	temp = get_row(fd, buffer);
-	if (!temp)
+	temp[fd] = get_row(fd, buffer[fd]);
+	if (!temp[fd])
 	{
-		free(buffer);
-		buffer = NULL;
+		free(buffer[fd]);
+		buffer[fd] = NULL;
 		return (NULL);
 	}
-	line = seperate_row(temp);
-	free(buffer);
-	buffer = reload_row(temp);
-	free(temp);
+	line = seperate_row(temp[fd]);
+	free(buffer[fd]);
+	buffer[fd] = reload_row(temp[fd]);
+	free(temp[fd]);
 	return (line);
 }
